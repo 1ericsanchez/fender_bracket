@@ -16,6 +16,7 @@ x_offset = 22;
 thickeness = 5;
 bracket_depth = 17 + thickeness;
 screw_diameter = 5.5 / 2; // M5 screw;
+screw_head_diameter = 9 / 2; // M5 screw head
 cylinder_length = 600;  // Something long enough to cut through the bracket
 slot_width = 10;
 
@@ -37,13 +38,20 @@ module side() {
     square([thickeness, height], center = false);
 }
 
+module x_hole_recess() {
+    rotate([0,90,0])
+        translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), (width / 2) ])
+            difference() {
+                cylinder(h = 500, r = screw_head_diameter, center = true);
+                cylinder(h = width + 2 * (thickeness - 1), r = screw_head_diameter + 1, center = true);
+            }
+}
 
 module x_holes() {
     rotate([0,90,0])
         translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), 0])
             cylinder(h = 500, r = screw_diameter, center = true);
 }
-
 
 module bracket() {
     union() {
@@ -72,9 +80,11 @@ module slot() {
     }
 }
 
+
 // union() {
 difference() {
     bracket();
     x_holes();
     slot();
+    x_hole_recess();
 }

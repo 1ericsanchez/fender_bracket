@@ -9,6 +9,8 @@ The bracket mounts on the upper end of the seat stays.
 ![](images/fender_bracket_ortho.png)
 
 ### ToDo:
-* add screw hole recess
-* set correct screw diameter
+* ~~add screw hole recess~~
+* ~~set correct screw diameter~~
 * add scaling factor
+* refactor to center on origin?
+* add chamfer?
