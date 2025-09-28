@@ -1,24 +1,27 @@
 // Fender bracket for Canyon Grizl
 // Attaches to outward facing mount points at top of seat stays
-// Designed since there is no seat stay brace with a fender mount point
-// common to other bikes.
+// Designed since there is no seat stay brace with an accessory mount point
+// common on other bikes.
 // 
 // Author: Eric Sanchez
 // Date: 2025-09-27
 
+// Number of sides for circles, if setting this low, make sure that smallest diameter still fits screw and screw head
 resolution = 100;
 $fn = resolution;
 
 height = 13;
 y_offest = 3;
-width = 88;
+width = 89;
 x_offset = 22;
 thickeness = 5;
 bracket_depth = 17 + thickeness;
-screw_diameter = 5.5 / 2; // M5 screw;
-screw_head_diameter = 9 / 2; // M5 screw head
+screw_diameter = 5.5 / 2; // M5 screw thread diameter + ~.5 mm tolerance;
+screw_head_diameter = 9 / 2; // M5 screw head + ~.6 mm tolerance
 cylinder_length = 600;  // Something long enough to cut through the bracket
 slot_width = 10;
+recess_depth = 1;
+x_hole_slot_width = 2;
 
 v1 = [0,0];
 v2 = [0,height];
@@ -38,19 +41,31 @@ module side() {
     square([thickeness, height], center = false);
 }
 
+module x_holes() {
+    rotate([0,90,0])
+        translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), 0])
+            hull() {
+                translate([x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_diameter, center = true);
+                translate([-x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_diameter, center = true);
+            }
+}
+
+// Explanation:
+// First cylinder is a hole the diameter of the screw head.
+// Second cylinder is gap between the inside faces of the screws, make it diameter + 1 to subtract from the volume of the first cylinder
 module x_hole_recess() {
     rotate([0,90,0])
         translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), (width / 2) ])
             difference() {
-                cylinder(h = 500, r = screw_head_diameter, center = true);
-                cylinder(h = width + 2 * (thickeness - 1), r = screw_head_diameter + 1, center = true);
+                hull() {
+                    translate([x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_head_diameter, center = true);
+                    translate([- (x_hole_slot_width / 2),0,0]) cylinder(h = 500, r = screw_head_diameter, center = true);
+                }
+                hull() {
+                    translate([x_hole_slot_width / 2,0,0]) cylinder(h = width + (2 * (thickeness - recess_depth)), r = screw_head_diameter + 1, center = true);
+                    translate([- (x_hole_slot_width / 2),0,0]) cylinder(h = width + (2 * (thickeness - recess_depth)), r = screw_head_diameter + 1, center = true);
+                }
             }
-}
-
-module x_holes() {
-    rotate([0,90,0])
-        translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), 0])
-            cylinder(h = 500, r = screw_diameter, center = true);
 }
 
 module bracket() {
@@ -70,7 +85,7 @@ module bracket() {
     }
 }
 
-module slot() {
+module center_slot() {
     linear_extrude(height = 10 * thickeness, center = true) {
         translate([(width / 2) - (slot_width / 2), (height) / 2 + y_offest, 0])
             hull() {
@@ -85,6 +100,6 @@ module slot() {
 difference() {
     bracket();
     x_holes();
-    slot();
+    center_slot();
     x_hole_recess();
 }
