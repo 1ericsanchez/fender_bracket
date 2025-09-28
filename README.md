@@ -12,5 +12,5 @@ The bracket mounts on the upper end of the seat stays.
 * ~~add screw hole recess~~
 * ~~set correct screw diameter~~
 * ~~add scaling factor~~
-* refactor to center on origin?
+* ~~refactor to center on origin~~
 * add chamfer?
