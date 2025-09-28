@@ -11,42 +11,43 @@ resolution = 100;
 $fn = resolution;
 
 height = 13;
-y_offest = 3;
+y_offset = 3;
 width = 89;
 x_offset = 22;
-thickeness = 5;
-bracket_depth = 17 + thickeness;
-screw_diameter = 5.5 / 2; // M5 screw thread diameter + ~.5 mm tolerance;
-screw_head_diameter = 9 / 2; // M5 screw head + ~.6 mm tolerance
+thickness = 5;
+bracket_depth = 17 + thickness;
+screw_radius = 5.5 / 2; // M5 screw thread diameter + ~.5 mm tolerance;
+screw_head_radius = 9 / 2; // M5 screw head + ~.6 mm tolerance
 cylinder_length = 600;  // Something long enough to cut through the bracket
-slot_width = 10;
+center_slot_width = 10;
 recess_depth = 1;
 x_hole_slot_width = 2;
 
-v1 = [0,0];
-v2 = [0,height];
-v3 = [x_offset,height+y_offest];
-v4 = [width-x_offset,height+y_offest];
-v5 = [width,height];
-v6 = [width,0];
-v7 = [width - x_offset,y_offest];
-v8 = [x_offset,y_offest];
-
 module arch() {
-    linear_extrude(height = thickeness)
+    let(
+        v1 = [0,0],
+        v2 = [0,height],
+        v3 = [x_offset, height + y_offset],
+        v4 = [width - x_offset, height + y_offset],
+        v5 = [width, height],
+        v6 = [width, 0],
+        v7 = [width - x_offset, y_offset],
+        v8 = [x_offset, y_offset]
+    )
+    linear_extrude(height = thickness)
         polygon(points=[v1,v2,v3,v4,v5,v6,v7,v8]);
 }
 
 module side() {
-    square([thickeness, height], center = false);
+    square([thickness, height], center = false);
 }
 
 module x_holes() {
     rotate([0,90,0])
-        translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), 0])
+        translate([-(bracket_depth / 2) - (thickness / 2), (height / 2), 0])
             hull() {
-                translate([x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_diameter, center = true);
-                translate([-x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_diameter, center = true);
+                translate([x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_radius, center = true);
+                translate([-(x_hole_slot_width / 2),0,0]) cylinder(h = 500, r = screw_radius, center = true);
             }
 }
 
@@ -55,15 +56,15 @@ module x_holes() {
 // Second cylinder is gap between the inside faces of the screws, make it diameter + 1 to subtract from the volume of the first cylinder
 module x_hole_recess() {
     rotate([0,90,0])
-        translate([-(bracket_depth / 2) - (thickeness / 2), (height / 2), (width / 2) ])
+        translate([-(bracket_depth / 2) - (thickness / 2), (height / 2), (width / 2) ])
             difference() {
                 hull() {
-                    translate([x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_head_diameter, center = true);
-                    translate([- (x_hole_slot_width / 2),0,0]) cylinder(h = 500, r = screw_head_diameter, center = true);
+                    translate([x_hole_slot_width / 2,0,0]) cylinder(h = 500, r = screw_head_radius, center = true);
+                    translate([-(x_hole_slot_width / 2),0,0]) cylinder(h = 500, r = screw_head_radius, center = true);
                 }
                 hull() {
-                    translate([x_hole_slot_width / 2,0,0]) cylinder(h = width + (2 * (thickeness - recess_depth)), r = screw_head_diameter + 1, center = true);
-                    translate([- (x_hole_slot_width / 2),0,0]) cylinder(h = width + (2 * (thickeness - recess_depth)), r = screw_head_diameter + 1, center = true);
+                    translate([x_hole_slot_width / 2,0,0]) cylinder(h = width + (2 * (thickness - recess_depth)), r = screw_head_radius + 1, center = true);
+                    translate([-(x_hole_slot_width / 2),0,0]) cylinder(h = width + (2 * (thickness - recess_depth)), r = screw_head_radius + 1, center = true);
                 }
             }
 }
@@ -72,7 +73,7 @@ module bracket() {
     union() {
         // left side
         linear_extrude(height = bracket_depth)
-            translate([-thickeness, 0, thickeness])
+            translate([-thickness, 0, thickness])
                 side();
 
         // arch
@@ -80,26 +81,27 @@ module bracket() {
 
         // right side
         linear_extrude(height = bracket_depth)
-            translate([width, 0, thickeness])
+            translate([width, 0, thickness])
                 side();
     }
 }
 
 module center_slot() {
-    linear_extrude(height = 10 * thickeness, center = true) {
-        translate([(width / 2) - (slot_width / 2), (height) / 2 + y_offest, 0])
+    linear_extrude(height = 10 * thickness, center = true) {
+        translate([(width / 2) - (center_slot_width / 2), (height) / 2 + y_offset, 0])
             hull() {
-                translate([slot_width,0,0]) circle(screw_diameter);
-                circle(screw_diameter);
+                translate([center_slot_width, 0, 0]) circle(screw_radius);
+                circle(screw_radius);
             }
     }
 }
 
-
-// union() {
-difference() {
-    bracket();
-    x_holes();
-    center_slot();
-    x_hole_recess();
+scale([1,1,1]){
+    // union() {
+    difference() {
+        bracket();
+        x_holes();
+        center_slot();
+        x_hole_recess();
+    }
 }
