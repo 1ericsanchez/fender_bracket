@@ -11,7 +11,7 @@ resolution = 100;
 $fn = resolution;
 
 height = 13;
-y_offset = 3;
+y_offset = 7;
 width = 89;
 x_offset = 22;
 thickness = 5;
