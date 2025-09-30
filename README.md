@@ -8,6 +8,8 @@ The bracket mounts on the upper end of the seat stays.
 
 ![](images/fender_bracket_ortho.png)
 
+![](images/dimensions.drawio.png)
+
 ### ToDo:
 * ~~add screw hole recess~~
 * ~~set correct screw diameter~~

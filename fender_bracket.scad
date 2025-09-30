@@ -52,8 +52,8 @@ module x_holes() {
 }
 
 // Explanation:
-// First cylinder is a hole the diameter of the screw head.
-// Second cylinder is gap between the inside faces of the screws, make it diameter + 1 to subtract from the volume of the first cylinder
+// First hull is a hole the diameter of the screw head.
+// Second hull is gap between the inside faces of the screws, make it radius + 1 to subtract from the volume of the first hull
 module x_hole_recess() {
     rotate([0,90,0])
         translate([-(bracket_depth / 2) - (thickness / 2), (height / 2), 0 ])
